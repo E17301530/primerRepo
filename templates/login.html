@@ -17,21 +17,21 @@
           </div>
           <div class="col-sm">
             <h2>iniciar secion</h2>
-            <form method="POST">
+            <form action="/login" method="POST">
                 <div class="form-group">
                   <label for="exampleInputEmail1">correro Email</label>
                   <input type="email" class="form-control" id="exampleInputEmail1" 
                   aria-describedby="emailHelp" placeholder="algien@gmail.com"
-                  name="email">
+                  name="email" required>
                   <small id="emailHelp" class="form-text text-muted">ingrese su email</small>
                 </div>
                 <div class="form-group">
                   <label for="exampleInputPassword1">Password</label>
                   <input type="password" class="form-control" 
                   id="exampleInputPassword1" placeholder="Password"
-                  name="pas">
+                  name="pas" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">ingresar</button>
             </form>
           </div>
           <div class="col-sm">
