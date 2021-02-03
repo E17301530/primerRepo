@@ -6,11 +6,25 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
-    <title>REgistrar Usuario</title>
+    <title>Registrar Usuario</title>
 </head>
 <body>
-    <h1>Registro de Usuario</h1>
-    <form action="/newuser" method="POST">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      <ul>
+      {% for category, message in messages %}        
+            <div class="{{category}}" role="alert">
+                {{ message }}
+            </div>
+        
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  {% block body %}{% endblock %}
+   <h1>Registro de Usuario</h1>
+    
+    <form action="/newuser" method="POST" name="registroU">
         <div class="form-row">
             <div class="form-group col-md-4"> 
                 <label for="inputNombre">Nombre:</label>
@@ -36,25 +50,33 @@
               <option>registro</option>
               <option>lectura</option>
               <option>eliminacion</option>
-              <option>root</option>
+              
             </select>
         <div class="form-row">
             <div class="form-group col-md-4"> 
-                <label for="inputusuario">Nombre:</label>   
+                <label for="inputusuario">Usuario:</label>   
                 <input class="form-control" 
                  required name="user" placeholder="alguien@gmaul.com">
             </div>
             <div class="form-group col-md-4"> 
                 <label for="inputusuario">contraseña:</label>
                 <input clas="form-group"
-                 required name="pass">
+                 required name="pass" type="password">
             </div>
             <div class="form-group col-md-4"> 
                 <label for="inputusuario">confirme su contraseña:</label>
-                <input clas="form-group"
+                <input clas="form-group" type="password" 
+                
                  required name="pass2">
-        </div>
-        <button id="newuser" type="submit" class="btn btn-success">Registrar</button>        
-    </form>x
+            </div>
+            <div class="form-group col-md-12"> 
+                <label for="credencial">credencial:</label>
+                <input clas="form-group" placeholder="{{g.usuario.nombre}} {{g.usuario.apellidoPaterno}} {{g.usuario.apellidoMaterno}}"
+                disabled
+                 required name="empleado">
+            </div>
+        <button id="newuser" type="submit" class="btn btn-success"
+            >Registrar</button>        
+    </form>
 </body>
 </html>

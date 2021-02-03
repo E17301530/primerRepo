@@ -10,12 +10,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from bson import json_util
 from bson.objectid import ObjectId
 from flask_login import current_user, login_user, logout_user, login_required
-
+import time
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
 app.config["MONGO_URI"] = "mongodb://localhost:27017/appone"
 mongo = PyMongo(app)
+
 
 @app.before_request
 def before_request():
@@ -23,7 +24,6 @@ def before_request():
     if 'user_id' in session:
         usuario = mongo.db.usuarios.find_one({'user':session['user_id']})
         g.usuario = usuario
-        print(g.usuario)
 
 @app.route('/')
 def star():
@@ -32,7 +32,6 @@ def star():
 
 @app.route('/login', methods=["GET" , "POST"])
 def login():
-   
     if request.method == 'POST': 
         session.pop('user_id', None) 
         session.clear()  
@@ -42,6 +41,7 @@ def login():
         if (usuario['user'] == username and 
             check_password_hash(usuario['pass'],pas)):
             session['user_id'] = usuario['user']
+            flash('bienvenido')
             return redirect(url_for('main'))
         return redirect(url_for('login'))
         
@@ -53,34 +53,43 @@ def main():
         return render_template("login.html")
     return render_template("main.html")
 
-@app.route('/registro')
+@app.route('/registrar')
 def registrar():
+    if not g.usuario:
+        return render_template("login.html")
     return render_template("registro.html")
 
 @app.route('/newuser', methods=['POST'])
 def newuser():
-    nombre = request.form['nombre']
-    apellidoP = request.form['apellidoPaterno']
-    apellidoM = request.form['ApellidoMaterno']
-    tipoUsuario = request.form['tipoUusuario']
-    user = request.form['user']
-    pas = request.form['pass']
-    if  nombre and apellidoP and apellidoM and tipoUsuario and user and pas:
-        hashed_pas = generate_password_hash(pas)
-        id = mongo.db.usuarios.insert(
-            {'nombre': nombre, 'apellidoPaterno':apellidoP,
-             'apellidoMaterno': apellidoM,'tipoUsuario': tipoUsuario,
-             'user': user, 'pass': hashed_pas}
-        )
-        respo = {
-            "id": str(id),
-            "name": nombre,
-            "user": user
-        }
-        return respo 
+    if g.usuario:
+        nombre = request.form['nombre']
+        apellidoP = request.form['apellidoPaterno']
+        apellidoM = request.form['ApellidoMaterno']
+        tipoUsuario = request.form['tipoUusuario']
+        user = request.form['user']
+        pas = request.form['pass']
+        pas2 = request.form['pass2']
+        #creadoPor = g.usuario.nombre
+        usuario = mongo.db.usuarios.find_one({'user':user})
+        print(usuario)
+        if (usuario):
+            flash('el usuario ya existe en la base de datos','alert alert-danger')
+            return redirect(url_for('registrar'))            
+        else:
+            
+            if  nombre and apellidoP and apellidoM and tipoUsuario and user and pas:
+                hashed_pas = generate_password_hash(pas)
+                mongo.db.usuarios.insert(
+                    {'nombre': nombre, 'apellidoPaterno':apellidoP,
+                    'apellidoMaterno': apellidoM,'tipoUsuario': tipoUsuario,
+                    'user': user, 'pass': hashed_pas, #'creado por': creadoPor,
+                    'fecha': time.strftime("%d/%m/%y"),'hora': time.strftime("%H:%M:%S")}
+                )
+                flash('ususario creado correctamente','alert alert-success')
+                return redirect(url_for('registrar'))
     else:
-        ('error 999')
-    return('guardado')
+        return redirect(url_for('login'))
+    return render_template("registro.html")
 
 @app.route('/usuarios')
 def getUsuarios():
