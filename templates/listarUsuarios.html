@@ -16,6 +16,18 @@
           <button type="submit" class="btn btn-danger">salir</button>
         </form> 
     </nav>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+     
+      {% for category, message in messages %}        
+            <div class="{{category}}" role="alert">
+                {{ message }}
+            </div>
+        
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  {% block body %}{% endblock %}
     <h1>lista de usuarios</h1>
     
     <table class="table table-striped">
@@ -39,7 +51,7 @@
             <td>{{ usuario.user }}</td>
             <td>{{ usuario.tipoUsuario }}</td>
             <td>{{ usuario.fecha }} {{ usuario.hora }}</td>
-            <td><form action="/usuario/{{usuario._id}}" method="Delete">
+            <td><form action="/eliminarU/{{usuario._id}}" method="POST">
               <button type="submit" class="btn btn-danger">eliminar</button>
             </form> </td>
             <td><button type="button" class="btn btn-warning">Editar</button></td>

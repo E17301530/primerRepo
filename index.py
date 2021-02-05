@@ -28,7 +28,6 @@ def before_request():
 
 @app.route('/')
 def star():
-    #if not session.get('logged_in'):
     return render_template('login.html')
 
 @app.route('/login', methods=["GET" , "POST"])
@@ -45,7 +44,6 @@ def login():
                 check_password_hash(usuario['pass'],pas)):
                 session['user_id'] = usuario['user']
                 session['tipoUsuario'] = usuario['tipoUsuario']
-                flash('bienvenido')
                 return redirect(url_for('main'))
             else:
                 flash('usuario o contraseña incorrectas','alert alert-danger')
@@ -57,25 +55,28 @@ def login():
 
 @app.route('/main')
 def main():
-    if not g.usuario:
-        return render_template("login.html")
-    return render_template("main.html")
+    if 'user_id' in session:
+        return render_template("main.html")
+    flash('inicie sesion','alert alert-danger')
+    return render_template("login.html")
+
+
 
 @app.route('/registrar')
 def registrar():
-    if not g.usuario:
-        return render_template("login.html")
-    else:
+    if 'user_id' in session:
         if (session['tipoUsuario'] == 'root' or session['tipoUsuario'] == 'escritura'):
             return render_template("registro.html")
         else:
             flash('usted no tiene permiso para esta ruta','alert alert-danger')
             return redirect(url_for('main'))
+    flash('inicie sesion','alert alert-danger')
     return render_template("login.html")
+    
 
 @app.route('/newuser', methods=['POST'])
 def newuser():
-    if g.usuario:
+    if 'user_id' in session:
         nombre = request.form['nombre']
         apellidoP = request.form['apellidoPaterno']
         apellidoM = request.form['ApellidoMaterno']
@@ -99,22 +100,24 @@ def newuser():
                     'fecha': time.strftime("%d/%m/%y"),'hora': time.strftime("%H:%M:%S")}
                 )
                 flash('ususario creado correctamente','alert alert-success')
-                return redirect(url_for('registrar'))
+                return redirect(url_for('getUsuarios'))
             else:
                 flash('las contraseñas no coinsiden','alert alert-danger')
                 return redirect(url_for('registrar'))  
-    else:
-        return redirect(url_for('login'))
-    return render_template("registro.html")
+    flash('inicie sesion','alert alert-danger')
+    return render_template("login.html")
 
 @app.route('/usuarios')
 def getUsuarios():
-    if g.usuario:
-        usuarios = mongo.db.usuarios.find()
-        return render_template("listarUsuarios.html",usuarios=usuarios)
-    else:
-        flash('usted nesesita identificarse','alert alert-success')
-        return star()
+    if 'user_id' in session:
+        if (session['tipoUsuario'] == 'root' or session['tipoUsuario'] == 'administrador'):
+            usuarios = mongo.db.usuarios.find()
+            return render_template("listarUsuarios.html",usuarios=usuarios)
+        else:
+            flash('usted no tiene permiso para esta ruta','alert alert-danger')
+            return redirect(url_for('main'))  
+    flash('inicie sesion','alert alert-danger')
+    return render_template("login.html")
 
 @app.route('/usuario/<id>')
 def getusuario(id):
@@ -128,16 +131,18 @@ def deleteUsuario(id):
     mongo.db.usuarios.delete_one({'_id':ObjectId(id)})
     return ("usuario elimindado")
 
-@app.route('/eliminarU', methods=['POST'])
-def eliminarU():
+@app.route('/eliminarU/<id>', methods=['POST'])
+def eliminarU(id):
     if request.method == 'POST':
-        return 'eliminar'
-    mongo.db.usuarios.delete_one({'_id':ObjectId(id)})
+        mongo.db.usuarios.delete_one({'_id':ObjectId(id)})
+        flash('usuario eliminado','alert alert-success')
+        return redirect(url_for('getUsuarios'))
+    
     return ("usuario elimindado")
 
 @app.route('/out', methods=['POST'])
 def out():
-    session.pop('user_id', None)
+    session.clear()
     return star()
 
 @app.route('/lisusers')
