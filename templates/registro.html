@@ -9,16 +9,23 @@
     <title>Registrar Usuario</title>
 </head>
 <body>
+    <nav class="navbar navbar-dark bg-dark">
+        <p class="text-primary">
+            {{g.usuario.nombre}} {{g.usuario.apellidoPaterno}}
+        </p>
+        <form action="/out" method="POST">
+            <button type="submit" class="btn btn-danger">salir</button>
+          </form> 
+    </nav>
     {% with messages = get_flashed_messages(with_categories=True) %}
     {% if messages %}
-      <ul>
+     
       {% for category, message in messages %}        
             <div class="{{category}}" role="alert">
                 {{ message }}
             </div>
         
       {% endfor %}
-      </ul>
     {% endif %}
   {% endwith %}
   {% block body %}{% endblock %}
@@ -28,17 +35,17 @@
         <div class="form-row">
             <div class="form-group col-md-4"> 
                 <label for="inputNombre">Nombre:</label>
-            <input class="form-control"
+            <input class="form-control" maxlength="20" type="text"
              required name="nombre" placeholder="ingrese su nombre">
             </div>
             <div class="form-group col-md-4">
                 <label for="inputApellidoP">Apellido Paterno</label>
-            <input class="form-control"
+            <input class="form-control" maxlength="20" type="text"
              required name="apellidoPaterno" placeholder="Apellido Paterno">
             </div>
             <div class="form-group col-md-4">
                 <label for="inputApellidoM">Apellido Materno</label>
-            <input class="form-control"
+            <input class="form-control" maxlength="20" type="text"
              required name="ApellidoMaterno" placeholder="Apellido Materno">
             </div>
         </div>
@@ -47,7 +54,7 @@
             <select required class="form-control" 
             id="exampleFormControlSelect1" name="tipoUusuario">
               <option>administrador</option>
-              <option>registro</option>
+              <option>escritura</option>
               <option>lectura</option>
               <option>eliminacion</option>
               
@@ -60,23 +67,28 @@
             </div>
             <div class="form-group col-md-4"> 
                 <label for="inputusuario">contraseña:</label>
-                <input clas="form-group"
+                <input clas="form-group" minlength="7" maxlength="30"
                  required name="pass" type="password">
             </div>
             <div class="form-group col-md-4"> 
                 <label for="inputusuario">confirme su contraseña:</label>
                 <input clas="form-group" type="password" 
-                
+                minlength="7" maxlength="30"
                  required name="pass2">
             </div>
             <div class="form-group col-md-12"> 
                 <label for="credencial">credencial:</label>
-                <input clas="form-group" placeholder="{{g.usuario.nombre}} {{g.usuario.apellidoPaterno}} {{g.usuario.apellidoMaterno}}"
+                <br>
+                <input clas="form-group" 
+                value="{{g.usuario.nombre}}"
                 disabled
-                 required name="empleado">
+                required name="empleado">
             </div>
         <button id="newuser" type="submit" class="btn btn-success"
-            >Registrar</button>        
+            >Registrar</button>         
     </form>
+    <form action="/main" method="GET">
+        <button type="submit" class="btn btn-success">Regresar</button>
+      </form>
 </body>
 </html>

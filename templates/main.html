@@ -12,35 +12,30 @@
 <body>
   <nav class="navbar navbar-dark bg-dark">
     <p class="text-primary">
-    Bienvenido {{g.usuario.nombre}} {{g.usuario.apellidoPaterno}}
+      Bienvenido {{g.usuario.nombre}} {{g.usuario.apellidoPaterno}}
     </p>
-    <button type="submit">cerrar session</button>
-    <button action="/registro">Registrar Usuario</button>
-    <button class="navbar-toggler" type="button" 
-    data-toggle="collapse" data-target="#navbarTogglerDemo01"
-    aria-controls="navbarTogglerDemo01" 
-    aria-expanded="false" 
-    aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="#">Hidden brand</a>
-      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
-      </ul>
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
-    </div>
+   <!-- Example single danger button -->
+<div class="btn-group">
+  <form action="/out" method="POST">
+    <button type="submit" class="btn btn-danger">salir</button>
+  </form> 
+</div>
   </nav>
+  {% if g.usuario.tipoUsuario == 'root' %}
+  <form action="/registrar" method="GET">
+    <button type="submit" class="btn btn-success">Crear Usuario</button>
+  </form>
+  {% endif %}
+  {% if g.usuario.tipoUsuario == 'root'%}
+  <form action="/usuarios" method="GET">
+    <button type="submit" class="btn btn-success">listar usuarios</button>
+  </form> 
+  {% endif %}
+  {% if g.usuario.tipoUsuario == 'lectura' %}
+  <p>
+    usted solo es un usuario con privilegios de solo lectura
+  </p>
+  {% endif %}
+
 </body>
 </html>

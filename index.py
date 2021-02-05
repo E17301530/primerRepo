@@ -21,6 +21,7 @@ mongo = PyMongo(app)
 @app.before_request
 def before_request():
     g.user = None
+    g.user = current_user
     if 'user_id' in session:
         usuario = mongo.db.usuarios.find_one({'user':session['user_id']})
         g.usuario = usuario
@@ -38,13 +39,18 @@ def login():
         username = request.form['email']
         pas = request.form['pas']  
         usuario = mongo.db.usuarios.find_one({'user':username})
-        if (usuario['user'] == username and 
-            check_password_hash(usuario['pass'],pas)):
-            session['user_id'] = usuario['user']
-            flash('bienvenido')
-            return redirect(url_for('main'))
-        return redirect(url_for('login'))
-        
+        if (usuario):
+            if (usuario['user'] == username and 
+                check_password_hash(usuario['pass'],pas)):
+                session['user_id'] = usuario['user']
+                flash('bienvenido')
+                return redirect(url_for('main'))
+            else:
+                flash('usuario o contraseña incorrectas','alert alert-danger')
+                return redirect(url_for('login'))
+        else:
+            flash('usuario o contraseña incorrectas','alert alert-danger')
+            return redirect(url_for('login'))
     return render_template("login.html")
 
 @app.route('/main')
@@ -69,6 +75,7 @@ def newuser():
         user = request.form['user']
         pas = request.form['pass']
         pas2 = request.form['pass2']
+        #emple = {{g.usuario.nombre}}
         #creadoPor = g.usuario.nombre
         usuario = mongo.db.usuarios.find_one({'user':user})
         print(usuario)
@@ -76,26 +83,31 @@ def newuser():
             flash('el usuario ya existe en la base de datos','alert alert-danger')
             return redirect(url_for('registrar'))            
         else:
-            
-            if  nombre and apellidoP and apellidoM and tipoUsuario and user and pas:
+            if  (pas == pas2 and nombre and apellidoP and apellidoM and tipoUsuario and user and pas):
                 hashed_pas = generate_password_hash(pas)
                 mongo.db.usuarios.insert(
                     {'nombre': nombre, 'apellidoPaterno':apellidoP,
                     'apellidoMaterno': apellidoM,'tipoUsuario': tipoUsuario,
-                    'user': user, 'pass': hashed_pas, #'creado por': creadoPor,
+                    'user': user, 'pass': hashed_pas,# 'creado por': emple,
                     'fecha': time.strftime("%d/%m/%y"),'hora': time.strftime("%H:%M:%S")}
                 )
                 flash('ususario creado correctamente','alert alert-success')
                 return redirect(url_for('registrar'))
+            else:
+                flash('las contraseñas no coinsiden','alert alert-danger')
+                return redirect(url_for('registrar'))  
     else:
         return redirect(url_for('login'))
     return render_template("registro.html")
 
 @app.route('/usuarios')
 def getUsuarios():
-    listUser = mongo.db.usuarios.find()
-    resu = json_util.dumps(listUser)
-    return Response(resu, mimetype='aplication/json')
+    if g.usuario:
+        usuarios = mongo.db.usuarios.find()
+        return render_template("listarUsuarios.html",usuarios=usuarios)
+    else:
+        flash('usted nesesita identificarse','alert alert-success')
+        return star()
 
 @app.route('/usuario/<id>')
 def getusuario(id):
@@ -103,10 +115,29 @@ def getusuario(id):
     res = json_util.dumps(user)
     return Response(res, mimetype='aplication/json')
 
+#eliminar postman
 @app.route('/usuario/<id>', methods=['Delete'])
 def deleteUsuario(id):
     mongo.db.usuarios.delete_one({'_id':ObjectId(id)})
     return ("usuario elimindado")
+
+@app.route('/eliminarU', methods=['POST'])
+def eliminarU():
+    if request.method == 'POST':
+        return 'eliminar'
+    mongo.db.usuarios.delete_one({'_id':ObjectId(id)})
+    return ("usuario elimindado")
+
+@app.route('/out', methods=['POST'])
+def out():
+    session.pop('user_id', None)
+    return star()
+
+@app.route('/lisusers')
+def getus():
+    listUser = mongo.db.usuarios.find()
+    resu = json_util.dumps(listUser)
+    return Response(resu, mimetype='aplication/json')
 
 if __name__ ==  "__main__":
     app.run(debug=True)
