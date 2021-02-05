@@ -34,7 +34,8 @@ def star():
 @app.route('/login', methods=["GET" , "POST"])
 def login():
     if request.method == 'POST': 
-        session.pop('user_id', None) 
+        session.pop('user_id', None)
+        session.pop('tipoUsuario', None)  
         session.clear()  
         username = request.form['email']
         pas = request.form['pas']  
@@ -43,6 +44,7 @@ def login():
             if (usuario['user'] == username and 
                 check_password_hash(usuario['pass'],pas)):
                 session['user_id'] = usuario['user']
+                session['tipoUsuario'] = usuario['tipoUsuario']
                 flash('bienvenido')
                 return redirect(url_for('main'))
             else:
@@ -63,7 +65,13 @@ def main():
 def registrar():
     if not g.usuario:
         return render_template("login.html")
-    return render_template("registro.html")
+    else:
+        if (session['tipoUsuario'] == 'root' or session['tipoUsuario'] == 'escritura'):
+            return render_template("registro.html")
+        else:
+            flash('usted no tiene permiso para esta ruta','alert alert-danger')
+            return redirect(url_for('main'))
+    return render_template("login.html")
 
 @app.route('/newuser', methods=['POST'])
 def newuser():
@@ -74,9 +82,8 @@ def newuser():
         tipoUsuario = request.form['tipoUusuario']
         user = request.form['user']
         pas = request.form['pass']
-        pas2 = request.form['pass2']
-        #emple = {{g.usuario.nombre}}
-        #creadoPor = g.usuario.nombre
+        pas2 = request.form['pass2'] 
+        creador = session['user_id']
         usuario = mongo.db.usuarios.find_one({'user':user})
         print(usuario)
         if (usuario):
@@ -88,7 +95,7 @@ def newuser():
                 mongo.db.usuarios.insert(
                     {'nombre': nombre, 'apellidoPaterno':apellidoP,
                     'apellidoMaterno': apellidoM,'tipoUsuario': tipoUsuario,
-                    'user': user, 'pass': hashed_pas,# 'creado por': emple,
+                    'user': user, 'pass': hashed_pas, 'creado por': creador,
                     'fecha': time.strftime("%d/%m/%y"),'hora': time.strftime("%H:%M:%S")}
                 )
                 flash('ususario creado correctamente','alert alert-success')
