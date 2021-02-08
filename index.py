@@ -119,18 +119,6 @@ def getUsuarios():
     flash('inicie sesion','alert alert-danger')
     return render_template("login.html")
 
-@app.route('/usuario/<id>')
-def getusuario(id):
-    user = mongo.db.usuarios.find_one({'_id':ObjectId(id)})
-    res = json_util.dumps(user)
-    return Response(res, mimetype='aplication/json')
-
-#eliminar postman
-@app.route('/usuario/<id>', methods=['Delete'])
-def deleteUsuario(id):
-    mongo.db.usuarios.delete_one({'_id':ObjectId(id)})
-    return ("usuario elimindado")
-
 @app.route('/eliminarU/<id>', methods=['POST'])
 def eliminarU(id):
     if request.method == 'POST':
@@ -140,16 +128,36 @@ def eliminarU(id):
     
     return ("usuario elimindado")
 
+#@app.route('/actualizar', methods=["GET" , "POST"])
+#def actualizar():
+#    if 'user_id' in session:
+#        if request.method == 'POST':
+#            return ('actializa')
+#        return render_template("actualizarU.html")
+#    flash('inicie sesion','alert alert-danger')
+#    return render_template("login.html")
+
 @app.route('/out', methods=['POST'])
 def out():
     session.clear()
     return star()
-
+# listar usuario postmsn
 @app.route('/lisusers')
 def getus():
     listUser = mongo.db.usuarios.find()
     resu = json_util.dumps(listUser)
     return Response(resu, mimetype='aplication/json')
+    #eliminar postman
+@app.route('/usuario/<id>', methods=['Delete'])
+def deleteUsuario(id):
+    mongo.db.usuarios.delete_one({'_id':ObjectId(id)})
+    return ("usuario elimindado")
+#obtener solo 1 por postman
+@app.route('/usuario/<id>')
+def getusuario(id):
+    user = mongo.db.usuarios.find_one({'_id':ObjectId(id)})
+    res = json_util.dumps(user)
+    return Response(res, mimetype='aplication/json')
 
 if __name__ ==  "__main__":
     app.run(debug=True)

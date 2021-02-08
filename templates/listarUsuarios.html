@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-    <title>Document</title>
+    <title>Actualizar</title>
 </head>
 <body>
     <nav class="navbar navbar-dark bg-dark">
+      <form action="/main" method="GET">
+        <button type="submit" class="btn btn-success">Regresar</button>
+      </form>
         <p class="text-primary">
             {{g.usuario.nombre}} {{g.usuario.apellidoPaterno}}
         </p>
@@ -38,7 +41,6 @@
             <th scope="col">tipo</th>
             <th scope="col">fecha inserccion</th>
             <th scope="col">eliminar</th>
-            <th scope="col">editar</th>
           </tr>
         </thead>
         <form action="/eliminarU" method="POST" name="deleteu">
@@ -54,14 +56,10 @@
             <td><form action="/eliminarU/{{usuario._id}}" method="POST">
               <button type="submit" class="btn btn-danger">eliminar</button>
             </form> </td>
-            <td><button type="button" class="btn btn-warning">Editar</button></td>
-          
           </tr>
         </form>
         </tbody {% endfor %}>
       </table>
-      <form action="/main" method="GET">
-        <button type="submit" class="btn btn-success">Regresar</button>
-      </form>
+  
 </body>
 </html>
