@@ -33,15 +33,32 @@
     {% endif %}
   {% endwith %}
   {% block body %}{% endblock %}
+
   {% if (g.usuario.tipoUsuario == 'root' or g.usuario.tipoUsuario == 'escritura') %}
-  <form action="/registrar" method="GET">
-    <button type="submit" class="btn btn-success">Crear Usuario</button>
-  </form>
+  <div class="card" style="width: 18rem;">
+    
+    <div class="card-body">
+      <h5 class="card-title">Agregar usuario</h5>
+      </div>
+    <div class="card-body">
+      <form action="/registrar" method="GET">
+        <button type="submit" class="w-100 btn btn-success">Crear Usuario</button>
+      </form>
+    </div>
+  </div>
+
   {% endif %}
   {% if (g.usuario.tipoUsuario == 'root' or g.usuario.tipoUsuario == 'administrador')%}
-  <form action="/usuarios" method="GET">
-    <button type="submit" class="btn btn-success">listar usuarios</button>
-  </form> 
+  <div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Listar Usuarios</h5>
+      </div>
+    <div class="card-body">
+      <form action="/usuarios" method="GET">
+        <button type="submit" class="w-100 btn btn-success">listar usuarios</button>
+      </form> 
+    </div>
+  </div>
   {% endif %}
   {% if g.usuario.tipoUsuario == 'lectura' %}
   <p>

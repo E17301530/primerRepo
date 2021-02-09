@@ -8,7 +8,7 @@
 
     <title>Registrar Usuario</title>
 </head>
-<body>
+<body >
     <nav class="navbar navbar-dark bg-dark">
         <form action="/main" method="GET">
             <button type="submit" class="btn btn-success">Regresar</button>
@@ -32,14 +32,17 @@
     {% endif %}
   {% endwith %}
   {% block body %}{% endblock %}
+  
    <h1>Registro de Usuario</h1>
-    
+   
+    <br>
     <form action="/newuser" method="POST" name="registroU">
         <div class="form-row">
             <div class="form-group col-md-4"> 
                 <label for="inputNombre">Nombre:</label>
             <input class="form-control" maxlength="20" type="text"
-             required name="nombre" placeholder="ingrese su nombre">
+             required name="nombre" placeholder="ingrese su nombre"
+             type="text">
             </div>
             <div class="form-group col-md-4">
                 <label for="inputApellidoP">Apellido Paterno</label>
@@ -88,9 +91,9 @@
                 disabled
                 required name="empleado">
             </div>
-        <button id="newuser" type="submit" class="btn btn-success"
+        <button id="newuser" type="submit" class="w-100 btn btn-success"
             >Registrar</button>         
     </form>
-    
+
 </body>
 </html>
