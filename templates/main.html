@@ -9,7 +9,7 @@
     <title>inicio</title>
     
 </head>
-<body>
+<body style="background-color: rgb(233, 228, 225);">
   <nav class="navbar navbar-dark bg-dark">
     <p class="text-primary">
       Bienvenido {{g.usuario.nombre}} {{g.usuario.apellidoPaterno}}
@@ -35,8 +35,9 @@
   {% block body %}{% endblock %}
 
   {% if (g.usuario.tipoUsuario == 'root' or g.usuario.tipoUsuario == 'escritura') %}
-  <div class="card" style="width: 18rem;">
-    
+  <div class="text-center">
+  <div class="card" style="width: 12rem;">
+  </div>
     <div class="card-body">
       <h5 class="card-title">Agregar usuario</h5>
       </div>
@@ -49,15 +50,13 @@
 
   {% endif %}
   {% if (g.usuario.tipoUsuario == 'root' or g.usuario.tipoUsuario == 'administrador')%}
-  <div class="card" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Listar Usuarios</h5>
-      </div>
-    <div class="card-body">
+  <div class="text-center">  
+      <h5 class="card-title">Listar Usuarios</h5>  
+      <br>
       <form action="/usuarios" method="GET">
         <button type="submit" class="w-100 btn btn-success">listar usuarios</button>
       </form> 
-    </div>
+
   </div>
   {% endif %}
   {% if g.usuario.tipoUsuario == 'lectura' %}
